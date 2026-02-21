@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import api from '../services/api'
 import { useAuth } from '../context/AuthContext'
+import AlertBell from '../components/AlertBell'
 
 function JobsPage() {
   const [jobs, setJobs] = useState([])
@@ -70,6 +71,7 @@ function JobsPage() {
           >
             {scraping ? 'Scraping...' : '🔄 Scrape Now'}
           </button>
+          <AlertBell />
           {user ? (
             <div className="flex items-center gap-3">
               <span className="text-gray-300 text-sm">👋 {user.name}</span>
