@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
 import api from '../services/api'
 import { useAuth } from '../context/AuthContext'
 
@@ -46,77 +45,96 @@ function AlertsPage() {
   const unreadCount = alerts.filter(a => !a.is_read).length
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white">
-      {/* Navbar */}
-      <nav className="bg-gray-900 border-b border-gray-800 px-6 py-4 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2">
-          <span className="text-2xl font-bold text-white">JobPulse</span>
-          <span className="text-xl">⚡</span>
-        </Link>
-        <Link to="/" className="text-gray-400 hover:text-white text-sm border border-gray-700 px-3 py-2 rounded-lg transition-colors">
-          ← Back to Jobs
-        </Link>
-      </nav>
-
-      <div className="max-w-3xl mx-auto px-6 py-8">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-white">Alerts</h1>
-            <p className="text-gray-400 mt-1">
-              {unreadCount > 0 ? `${unreadCount} unread alerts` : 'All caught up!'}
-            </p>
-          </div>
-          {unreadCount > 0 && (
-            <button
-              onClick={markAllRead}
-              className="text-sm text-blue-400 hover:text-blue-300 border border-blue-800 px-3 py-2 rounded-lg transition-colors"
-            >
-              Mark all as read
-            </button>
-          )}
+    <div style={{ maxWidth: '860px', margin: '0 auto', padding: '32px 40px' }}>
+      {/* Header */}
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '28px' }}>
+        <div>
+          <h1 style={{
+            fontSize: '24px', fontWeight: 900, letterSpacing: '-0.8px',
+            background: 'linear-gradient(135deg, #f1f5f9, #94a3b8)',
+            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+            marginBottom: '5px',
+          }}>Alerts</h1>
+          <p style={{ fontSize: '13px', color: '#334155' }}>
+            {unreadCount > 0 ? `${unreadCount} unread — real-time job change notifications` : 'All caught up!'}
+          </p>
         </div>
-
-        {loading ? (
-          <div className="text-center text-gray-400 py-20">Loading alerts...</div>
-        ) : alerts.length === 0 ? (
-          <div className="text-center py-20">
-            <p className="text-4xl mb-4">🔔</p>
-            <p className="text-gray-400 text-lg">No alerts yet</p>
-            <p className="text-gray-600 text-sm mt-2">You'll be notified when new jobs are detected</p>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {alerts.map(alert => (
-              <div
-                key={alert.id}
-                onClick={() => !alert.is_read && markAsRead(alert.id)}
-                className={`p-4 rounded-xl border cursor-pointer transition-all ${
-                  alert.is_read
-                    ? 'bg-gray-900 border-gray-800 opacity-60'
-                    : 'bg-gray-900 border-blue-700 hover:border-blue-500'
-                }`}
-              >
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex items-start gap-3">
-                    <span className="text-xl mt-0.5">
-                      {alert.alert_type === 'new_job' ? '🆕' : '🔔'}
-                    </span>
-                    <div>
-                      <p className="text-white text-sm font-medium">{alert.message}</p>
-                      <p className="text-gray-500 text-xs mt-1">
-                        {new Date(alert.created_at || alert.sent_at).toLocaleString()}
-                      </p>
-                    </div>
-                  </div>
-                  {!alert.is_read && (
-                    <span className="shrink-0 w-2 h-2 bg-blue-500 rounded-full mt-2"></span>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
+        {unreadCount > 0 && (
+          <button onClick={markAllRead} style={{
+            fontSize: '12px', color: '#818cf8',
+            background: 'rgba(99,102,241,0.08)', border: '1px solid rgba(99,102,241,0.15)',
+            padding: '6px 14px', borderRadius: '8px', cursor: 'pointer',
+            transition: 'all 0.2s',
+          }}>
+            Mark all as read
+          </button>
         )}
       </div>
+
+      {/* Alerts List */}
+      {loading ? (
+        <div style={{ textAlign: 'center', color: '#334155', padding: '80px 0' }}>Loading alerts...</div>
+      ) : alerts.length === 0 ? (
+        <div style={{ textAlign: 'center', padding: '80px 0' }}>
+          <div style={{ fontSize: '40px', marginBottom: '12px' }}>🔔</div>
+          <p style={{ color: '#475569', fontSize: '15px', marginBottom: '6px' }}>No alerts yet</p>
+          <p style={{ color: '#1e3a5f', fontSize: '13px' }}>You'll be notified when new jobs are detected</p>
+        </div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          {alerts.map(alert => (
+            <div
+              key={alert.id}
+              onClick={() => !alert.is_read && markAsRead(alert.id)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: '14px',
+                padding: '14px 18px', borderRadius: '12px',
+                background: 'rgba(8,8,18,0.7)',
+                border: alert.is_read ? '1px solid rgba(255,255,255,0.04)' : '1px solid rgba(99,102,241,0.2)',
+                cursor: alert.is_read ? 'default' : 'pointer',
+                opacity: alert.is_read ? 0.4 : 1,
+                transition: 'all 0.18s ease',
+                position: 'relative', overflow: 'hidden',
+              }}
+            >
+              {/* Left accent bar */}
+              <span style={{
+                position: 'absolute', left: 0, top: 0, bottom: 0, width: '3px',
+                background: alert.is_read ? '#334155' : 'linear-gradient(180deg, #818cf8, #c084fc)',
+                borderRadius: '3px 0 0 3px',
+              }} />
+
+              {/* Icon */}
+              <div style={{
+                width: '38px', height: '38px', borderRadius: '10px', flexShrink: 0,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px',
+                background: alert.is_read ? 'rgba(51,65,85,0.3)' : 'rgba(99,102,241,0.1)',
+                border: alert.is_read ? '1px solid rgba(51,65,85,0.2)' : '1px solid rgba(99,102,241,0.2)',
+              }}>
+                {alert.alert_type === 'new_job' ? '🆕' : '🔔'}
+              </div>
+
+              {/* Content */}
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: '13px', fontWeight: 500, color: '#e2e8f0', marginBottom: '3px' }}>
+                  {alert.message}
+                </div>
+                <div style={{ fontSize: '11px', color: '#334155' }}>
+                  {new Date(alert.created_at || alert.sent_at).toLocaleString()}
+                </div>
+              </div>
+
+              {/* Unread dot */}
+              {!alert.is_read && (
+                <div style={{
+                  width: '8px', height: '8px', background: '#818cf8', borderRadius: '50%',
+                  boxShadow: '0 0 8px rgba(129,140,248,0.5)', flexShrink: 0,
+                }} />
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
