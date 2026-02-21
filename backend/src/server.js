@@ -3,6 +3,7 @@ const cors = require('cors');
 const http = require('http');
 const { Server } = require('socket.io');
 require('dotenv').config();
+const db = require('./db/index');
 
 const app = express();
 const server = http.createServer(app);
