@@ -3,7 +3,8 @@ const cors = require('cors');
 const http = require('http');
 const { Server } = require('socket.io');
 require('dotenv').config();
-const db = require('./db/index');
+const { startCronJobs } = require('./cron/scrapeJob');
+require('./db/index');
 
 const app = express();
 const server = http.createServer(app);
@@ -42,5 +43,7 @@ const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+startCronJobs();
 
 module.exports = { app, io };
