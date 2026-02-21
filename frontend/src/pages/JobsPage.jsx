@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import api from '../services/api'
+import { useAuth } from '../context/AuthContext'
 
 function JobsPage() {
   const [jobs, setJobs] = useState([])
@@ -8,6 +10,13 @@ function JobsPage() {
   const [search, setSearch] = useState('')
   const [filterCompany, setFilterCompany] = useState('')
   const [filterLocation, setFilterLocation] = useState('')
+  const { user, logout } = useAuth()
+  const navigate = useNavigate()
+
+  const handleLogout = () => {
+    logout()
+    navigate('/login')
+  }
 
   const fetchJobs = async () => {
     try {
@@ -61,6 +70,24 @@ function JobsPage() {
           >
             {scraping ? 'Scraping...' : '🔄 Scrape Now'}
           </button>
+          {user ? (
+            <div className="flex items-center gap-3">
+              <span className="text-gray-300 text-sm">👋 {user.name}</span>
+              <button
+                onClick={handleLogout}
+                className="text-gray-400 hover:text-white text-sm border border-gray-700 px-3 py-2 rounded-lg transition-colors"
+              >
+                Logout
+              </button>
+            </div>
+          ) : (
+            <Link
+              to="/login"
+              className="text-gray-400 hover:text-white text-sm border border-gray-700 px-3 py-2 rounded-lg transition-colors"
+            >
+              Sign In
+            </Link>
+          )}
         </div>
       </nav>
 
