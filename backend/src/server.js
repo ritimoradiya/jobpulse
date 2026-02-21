@@ -5,6 +5,8 @@ const { Server } = require('socket.io');
 require('dotenv').config();
 const db = require('./db/index');
 
+const db = require('./db/index');
+
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
