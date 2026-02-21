@@ -20,63 +20,113 @@ function LoginPage() {
       login(res.data.token, res.data.user)
       navigate('/')
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed')
+      setError(err.response?.data?.message || 'Invalid email or password')
     } finally {
       setLoading(false)
     }
   }
 
+  const inputStyle = {
+    width: '100%', background: 'rgba(15,15,25,0.8)',
+    border: '1px solid rgba(255,255,255,0.08)', borderRadius: '9px',
+    padding: '11px 14px', fontSize: '13px', color: '#e2e8f0',
+    outline: 'none', transition: 'border-color 0.2s',
+  }
+
   return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center px-4">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white">JobPulse ⚡</h1>
-          <p className="text-gray-400 mt-2">Sign in to your account</p>
+    <div style={{
+      minHeight: '100vh', display: 'flex',
+      alignItems: 'center', justifyContent: 'center', padding: '40px 24px',
+    }}>
+      <div style={{ width: '100%', maxWidth: '420px' }}>
+
+        {/* Logo */}
+        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+          <div style={{
+            fontSize: '28px', fontWeight: 900, letterSpacing: '-0.8px',
+            background: 'linear-gradient(135deg, #818cf8, #c084fc, #60a5fa)',
+            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+            marginBottom: '8px',
+          }}>JobPulse ⚡</div>
+          <div style={{ fontSize: '14px', color: '#334155' }}>Welcome back</div>
         </div>
 
-        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-8">
+        {/* Card */}
+        <div style={{
+          background: 'rgba(8,8,18,0.8)', border: '1px solid rgba(255,255,255,0.07)',
+          borderRadius: '16px', padding: '32px', backdropFilter: 'blur(20px)',
+          position: 'relative', overflow: 'hidden',
+        }}>
+          {/* Top shimmer */}
+          <div style={{
+            position: 'absolute', top: 0, left: 0, right: 0, height: '1px',
+            background: 'linear-gradient(90deg, transparent, rgba(129,140,248,0.5), transparent)',
+          }} />
+
+          {/* Error */}
           {error && (
-            <div className="bg-red-900/40 border border-red-700 text-red-300 text-sm px-4 py-3 rounded-lg mb-6">
-              {error}
-            </div>
+            <div style={{
+              background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)',
+              borderRadius: '8px', padding: '10px 14px',
+              fontSize: '13px', color: '#f87171', marginBottom: '20px',
+            }}>{error}</div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Email</label>
+          <form onSubmit={handleSubmit}>
+            {/* Email */}
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#475569', marginBottom: '7px' }}>
+                Email address
+              </label>
               <input
-                type="email"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                required
-                placeholder="you@example.com"
-                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                type="email" value={email} onChange={e => setEmail(e.target.value)}
+                required placeholder="you@example.com" style={inputStyle}
+                onFocus={e => e.target.style.borderColor = 'rgba(129,140,248,0.4)'}
+                onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.08)'}
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Password</label>
+
+            {/* Password */}
+            <div style={{ marginBottom: '24px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '7px' }}>
+                <label style={{ fontSize: '12px', fontWeight: 600, color: '#475569' }}>
+                  Password
+                </label>
+                <span style={{ fontSize: '11px', color: '#818cf8', cursor: 'pointer', transition: 'color 0.2s' }}
+                  onMouseEnter={e => e.target.style.color = '#a5b4fc'}
+                  onMouseLeave={e => e.target.style.color = '#818cf8'}
+                >
+                  Forgot password?
+                </span>
+              </div>
               <input
-                type="password"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                required
-                placeholder="••••••••"
-                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                type="password" value={password} onChange={e => setPassword(e.target.value)}
+                required placeholder="••••••••" style={inputStyle}
+                onFocus={e => e.target.style.borderColor = 'rgba(129,140,248,0.4)'}
+                onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.08)'}
               />
             </div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-blue-600 hover:bg-blue-500 disabled:bg-blue-900 disabled:cursor-not-allowed text-white font-medium py-2.5 rounded-lg transition-colors"
-            >
-              {loading ? 'Signing in...' : 'Sign In'}
+
+            {/* Submit */}
+            <button type="submit" disabled={loading} style={{
+              width: '100%', padding: '12px',
+              background: loading ? 'rgba(79,70,229,0.5)' : 'linear-gradient(135deg, #4f46e5, #7c3aed)',
+              color: 'white', fontSize: '14px', fontWeight: 600,
+              border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px',
+              cursor: loading ? 'not-allowed' : 'pointer',
+              transition: 'all 0.2s ease',
+              boxShadow: loading ? 'none' : '0 0 20px rgba(99,102,241,0.3)',
+            }}>
+              {loading ? 'Signing in...' : 'Sign In →'}
             </button>
           </form>
 
-          <p className="text-center text-gray-400 text-sm mt-6">
+          <div style={{ textAlign: 'center', marginTop: '20px', fontSize: '13px', color: '#334155' }}>
             Don't have an account?{' '}
-            <Link to="/register" className="text-blue-400 hover:text-blue-300">Register</Link>
-          </p>
+            <Link to="/register" style={{ color: '#818cf8', textDecoration: 'none', fontWeight: 500 }}>
+              Create account
+            </Link>
+          </div>
         </div>
       </div>
     </div>

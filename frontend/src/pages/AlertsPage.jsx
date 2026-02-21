@@ -45,39 +45,50 @@ function AlertsPage() {
   const unreadCount = alerts.filter(a => !a.is_read).length
 
   return (
-    <div style={{ maxWidth: '860px', margin: '0 auto', padding: '32px 40px' }}>
+    <div style={{ maxWidth: '780px', margin: '0 auto', padding: '36px 40px' }}>
+
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '28px' }}>
         <div>
           <h1 style={{
-            fontSize: '24px', fontWeight: 900, letterSpacing: '-0.8px',
+            fontSize: '24px', fontWeight: 900, letterSpacing: '-0.8px', marginBottom: '5px',
             background: 'linear-gradient(135deg, #f1f5f9, #94a3b8)',
             WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-            marginBottom: '5px',
           }}>Alerts</h1>
           <p style={{ fontSize: '13px', color: '#334155' }}>
             {unreadCount > 0 ? `${unreadCount} unread — real-time job change notifications` : 'All caught up!'}
           </p>
         </div>
         {unreadCount > 0 && (
-          <button onClick={markAllRead} style={{
-            fontSize: '12px', color: '#818cf8',
-            background: 'rgba(99,102,241,0.08)', border: '1px solid rgba(99,102,241,0.15)',
-            padding: '6px 14px', borderRadius: '8px', cursor: 'pointer',
-            transition: 'all 0.2s',
-          }}>
+          <button
+            onClick={markAllRead}
+            style={{
+              fontSize: '12px', color: '#818cf8',
+              background: 'rgba(99,102,241,0.08)', border: '1px solid rgba(99,102,241,0.15)',
+              padding: '7px 14px', borderRadius: '8px', cursor: 'pointer',
+              transition: 'all 0.2s ease',
+            }}
+            onMouseEnter={e => e.target.style.background = 'rgba(99,102,241,0.15)'}
+            onMouseLeave={e => e.target.style.background = 'rgba(99,102,241,0.08)'}
+          >
             Mark all as read
           </button>
         )}
       </div>
 
-      {/* Alerts List */}
+      {/* Content */}
       {loading ? (
-        <div style={{ textAlign: 'center', color: '#334155', padding: '80px 0' }}>Loading alerts...</div>
+        <div style={{ textAlign: 'center', color: '#334155', padding: '80px 0', fontSize: '13px' }}>
+          Loading alerts...
+        </div>
       ) : alerts.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '80px 0' }}>
-          <div style={{ fontSize: '40px', marginBottom: '12px' }}>🔔</div>
-          <p style={{ color: '#475569', fontSize: '15px', marginBottom: '6px' }}>No alerts yet</p>
+        <div style={{
+          textAlign: 'center', padding: '80px 0',
+          background: 'rgba(8,8,18,0.6)', border: '1px solid rgba(255,255,255,0.05)',
+          borderRadius: '14px',
+        }}>
+          <div style={{ fontSize: '40px', marginBottom: '14px' }}>🔔</div>
+          <p style={{ color: '#475569', fontSize: '15px', fontWeight: 500, marginBottom: '6px' }}>No alerts yet</p>
           <p style={{ color: '#1e3a5f', fontSize: '13px' }}>You'll be notified when new jobs are detected</p>
         </div>
       ) : (
@@ -88,7 +99,7 @@ function AlertsPage() {
               onClick={() => !alert.is_read && markAsRead(alert.id)}
               style={{
                 display: 'flex', alignItems: 'center', gap: '14px',
-                padding: '14px 18px', borderRadius: '12px',
+                padding: '16px 20px', borderRadius: '12px',
                 background: 'rgba(8,8,18,0.7)',
                 border: alert.is_read ? '1px solid rgba(255,255,255,0.04)' : '1px solid rgba(99,102,241,0.2)',
                 cursor: alert.is_read ? 'default' : 'pointer',
@@ -96,11 +107,19 @@ function AlertsPage() {
                 transition: 'all 0.18s ease',
                 position: 'relative', overflow: 'hidden',
               }}
+              onMouseEnter={e => {
+                if (!alert.is_read) e.currentTarget.style.borderColor = 'rgba(99,102,241,0.4)'
+              }}
+              onMouseLeave={e => {
+                if (!alert.is_read) e.currentTarget.style.borderColor = 'rgba(99,102,241,0.2)'
+              }}
             >
               {/* Left accent bar */}
               <span style={{
                 position: 'absolute', left: 0, top: 0, bottom: 0, width: '3px',
-                background: alert.is_read ? '#334155' : 'linear-gradient(180deg, #818cf8, #c084fc)',
+                background: alert.is_read
+                  ? '#1e3a5f'
+                  : 'linear-gradient(180deg, #818cf8, #c084fc)',
                 borderRadius: '3px 0 0 3px',
               }} />
 
@@ -109,14 +128,14 @@ function AlertsPage() {
                 width: '38px', height: '38px', borderRadius: '10px', flexShrink: 0,
                 display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px',
                 background: alert.is_read ? 'rgba(51,65,85,0.3)' : 'rgba(99,102,241,0.1)',
-                border: alert.is_read ? '1px solid rgba(51,65,85,0.2)' : '1px solid rgba(99,102,241,0.2)',
+                border: alert.is_read ? '1px solid rgba(51,65,85,0.15)' : '1px solid rgba(99,102,241,0.2)',
               }}>
                 {alert.alert_type === 'new_job' ? '🆕' : '🔔'}
               </div>
 
               {/* Content */}
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: '13px', fontWeight: 500, color: '#e2e8f0', marginBottom: '3px' }}>
+                <div style={{ fontSize: '13px', fontWeight: 500, color: '#e2e8f0', marginBottom: '4px' }}>
                   {alert.message}
                 </div>
                 <div style={{ fontSize: '11px', color: '#334155' }}>
