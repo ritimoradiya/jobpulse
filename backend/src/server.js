@@ -13,9 +13,9 @@ const io = new Server(server, {
 });
 
 app.use(cors({
-    origin: 'http://localhost:5173',
-    credentials: true
-}))
+  origin: 'http://localhost:5173',
+  credentials: true
+}));
 app.use(express.json());
 
 // Routes
@@ -23,11 +23,13 @@ const authRoutes = require('./routes/auth');
 const jobRoutes = require('./routes/jobs');
 const alertRoutes = require('./routes/alerts');
 const aiRoutes = require('./routes/ai');
+const trackedRoutes = require('./routes/tracked');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/jobs', jobRoutes);
 app.use('/api/alerts', alertRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/tracked', trackedRoutes);
 
 // Health check
 app.get('/', (req, res) => {

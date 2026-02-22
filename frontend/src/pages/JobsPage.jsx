@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import api from '../services/api'
 import { useAuth } from '../context/AuthContext'
 
 const S = {
   page: { display: 'flex', minHeight: 'calc(100vh - 60px)' },
-
-  // Sidebar
   sidebar: {
     width: '220px', flexShrink: 0,
     borderRight: '1px solid rgba(255,255,255,0.04)',
@@ -31,8 +30,6 @@ const S = {
     background: active ? 'rgba(99,102,241,0.2)' : 'rgba(255,255,255,0.05)',
     color: active ? '#818cf8' : '#334155',
   }),
-
-  // Main
   main: { flex: 1, padding: '32px 40px' },
   pageHeader: { display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '28px' },
   pageTitle: {
@@ -45,8 +42,6 @@ const S = {
   kpi: { textAlign: 'right' },
   kpiVal: (color) => ({ fontSize: '26px', fontWeight: 900, letterSpacing: '-1px', color }),
   kpiLabel: { fontSize: '11px', color: '#334155', marginTop: '1px' },
-
-  // Search
   searchRow: { display: 'flex', gap: '10px', marginBottom: '24px', alignItems: 'center' },
   searchWrap: {
     flex: 1, display: 'flex', alignItems: 'center', gap: '10px',
@@ -60,8 +55,6 @@ const S = {
     fontSize: '12px', color: '#475569', cursor: 'pointer',
     transition: 'all 0.2s ease', whiteSpace: 'nowrap',
   },
-
-  // Table
   tableWrap: {
     background: 'rgba(8,8,18,0.6)', border: '1px solid rgba(255,255,255,0.05)',
     borderRadius: '14px', overflow: 'hidden', backdropFilter: 'blur(10px)',
@@ -95,6 +88,7 @@ const S = {
     background: 'linear-gradient(135deg, #4f46e5, #7c3aed)',
     color: 'white', cursor: 'pointer', transition: 'all 0.2s ease',
     border: '1px solid rgba(255,255,255,0.08)', textDecoration: 'none',
+    display: 'inline-block',
   },
   scrapeBtn: {
     display: 'flex', alignItems: 'center', gap: '7px',
@@ -107,13 +101,13 @@ const S = {
 }
 
 const COMPANIES = [
-  { name: 'Google', color: '#4285f4', bg: 'linear-gradient(135deg,#4285f4,#1a73e8)' },
-  { name: 'Meta', color: '#1877f2', bg: 'linear-gradient(135deg,#1877f2,#0a52cc)' },
-  { name: 'Amazon', color: '#ff9900', bg: 'linear-gradient(135deg,#ff9900,#cc7700)' },
+  { name: 'Google',    color: '#4285f4', bg: 'linear-gradient(135deg,#4285f4,#1a73e8)' },
+  { name: 'Meta',      color: '#1877f2', bg: 'linear-gradient(135deg,#1877f2,#0a52cc)' },
+  { name: 'Amazon',    color: '#ff9900', bg: 'linear-gradient(135deg,#ff9900,#cc7700)' },
   { name: 'Microsoft', color: '#00a1f1', bg: 'linear-gradient(135deg,#00a1f1,#0078d4)' },
-  { name: 'Apple', color: '#999', bg: 'linear-gradient(135deg,#888,#555)' },
-  { name: 'Stripe', color: '#635bff', bg: 'linear-gradient(135deg,#635bff,#4f46e5)' },
-  { name: 'Netflix', color: '#e50914', bg: 'linear-gradient(135deg,#e50914,#b20710)' },
+  { name: 'Apple',     color: '#999',    bg: 'linear-gradient(135deg,#888,#555)' },
+  { name: 'Stripe',    color: '#635bff', bg: 'linear-gradient(135deg,#635bff,#4f46e5)' },
+  { name: 'Netflix',   color: '#e50914', bg: 'linear-gradient(135deg,#e50914,#b20710)' },
 ]
 
 function getCompanyStyle(name) {
@@ -141,7 +135,9 @@ function JobsPage() {
   const [search, setSearch] = useState('')
   const [filterCompany, setFilterCompany] = useState('')
   const [hoveredRow, setHoveredRow] = useState(null)
+  const [savedJobIds, setSavedJobIds] = useState(new Set())
   const { token } = useAuth()
+  const navigate = useNavigate()
 
   const fetchJobs = async () => {
     try {
@@ -157,6 +153,20 @@ function JobsPage() {
     }
   }
 
+  const fetchSaved = async () => {
+    if (!token) return
+    try {
+      const res = await api.get('/tracked', {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      const data = res.data
+      const list = Array.isArray(data) ? data : (data.tracked || data.jobs || [])
+      setSavedJobIds(new Set(list.map(item => item.job_id)))
+    } catch (err) {
+      console.error('Failed to fetch saved:', err)
+    }
+  }
+
   const handleScrape = async () => {
     setScraping(true)
     try {
@@ -169,7 +179,27 @@ function JobsPage() {
     }
   }
 
+  const toggleSave = async (jobId) => {
+    if (!token) { navigate('/login'); return }
+    try {
+      if (savedJobIds.has(jobId)) {
+        await api.delete(`/tracked/${jobId}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+        setSavedJobIds(prev => { const s = new Set(prev); s.delete(jobId); return s })
+      } else {
+        await api.post('/tracked', { job_id: jobId }, {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+        setSavedJobIds(prev => new Set([...prev, jobId]))
+      }
+    } catch (err) {
+      console.error('Save failed:', err)
+    }
+  }
+
   useEffect(() => { fetchJobs() }, [search, filterCompany])
+  useEffect(() => { fetchSaved() }, [token])
 
   const newCount = jobs.filter(j => isNewJob(j.posted_at)).length
 
@@ -183,11 +213,7 @@ function JobsPage() {
             const count = jobs.filter(j => j.company === co.name).length
             const active = filterCompany === co.name
             return (
-              <div
-                key={co.name}
-                style={S.sideItem(active)}
-                onClick={() => setFilterCompany(active ? '' : co.name)}
-              >
+              <div key={co.name} style={S.sideItem(active)} onClick={() => setFilterCompany(active ? '' : co.name)}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '9px' }}>
                   <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: co.color, flexShrink: 0 }} />
                   {co.name}
@@ -207,7 +233,6 @@ function JobsPage() {
 
       {/* Main */}
       <div style={S.main}>
-        {/* Header */}
         <div style={S.pageHeader}>
           <div>
             <div style={S.pageTitle}>Job Listings</div>
@@ -235,8 +260,7 @@ function JobsPage() {
           <div style={S.searchWrap}>
             <span style={{ fontSize: '14px', color: '#1e3a5f' }}>🔍</span>
             <input
-              value={search}
-              onChange={e => setSearch(e.target.value)}
+              value={search} onChange={e => setSearch(e.target.value)}
               placeholder="Search by title, skill, or keyword..."
               style={{ background: 'transparent', border: 'none', outline: 'none', fontSize: '13px', color: '#94a3b8', width: '100%' }}
             />
@@ -269,6 +293,7 @@ function JobsPage() {
                 {jobs.map((job, i) => {
                   const co = getCompanyStyle(job.company)
                   const isNew = isNewJob(job.posted_at)
+                  const isSaved = savedJobIds.has(job.id)
                   return (
                     <tr
                       key={job.id}
@@ -310,7 +335,9 @@ function JobsPage() {
                       </td>
                       <td style={S.td}>
                         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                          <button style={S.saveBtn(false)}>🔖 Save</button>
+                          <button style={S.saveBtn(isSaved)} onClick={() => toggleSave(job.id)}>
+                            {isSaved ? '✅ Saved' : '🔖 Save'}
+                          </button>
                           <a href={job.url} target="_blank" rel="noopener noreferrer" style={S.applyBtn}>
                             Apply →
                           </a>

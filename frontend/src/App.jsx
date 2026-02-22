@@ -5,6 +5,7 @@ import JobsPage from './pages/JobsPage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import AlertsPage from './pages/AlertsPage'
+import SavedJobsPage from './pages/SavedJobsPage'
 
 function App() {
   const location = useLocation()
@@ -20,6 +21,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/alerts" element={<AlertsPage />} />
+          <Route path="/saved" element={<SavedJobsPage />} />
         </Routes>
       </div>
     </>
