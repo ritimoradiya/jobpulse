@@ -10,10 +10,11 @@ import AnalyticsPage from './pages/AnalyticsPage'
 import AppliedPage from './pages/AppliedPage'
 import AIPage from './pages/AIPage'
 import ProfilePage from './pages/ProfilePage'
+import LandingPage from './pages/LandingPage'
 
 function App() {
   const location = useLocation()
-  const hideNav = ['/login', '/register'].includes(location.pathname)
+  const hideNav = ['/', '/login', '/register'].includes(location.pathname)
 
   return (
     <>
@@ -21,7 +22,8 @@ function App() {
       <div style={{ position: 'relative', zIndex: 1 }}>
         {!hideNav && <Navbar />}
         <Routes>
-          <Route path="/" element={<JobsPage />} />
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/jobs" element={<JobsPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/alerts" element={<AlertsPage />} />

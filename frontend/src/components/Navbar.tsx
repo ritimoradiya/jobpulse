@@ -20,7 +20,7 @@ function Navbar() {
   }, [])
 
   const navLinks = [
-    { label: 'Jobs',      path: '/' },
+    { label: 'Jobs',      path: '/jobs' },
     { label: 'Saved',     path: '/saved' },
     { label: 'Applied',   path: '/applied' },
     { label: 'AI Match',  path: '/ai' },
@@ -40,7 +40,7 @@ function Navbar() {
     }}>
       {/* Left */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '40px' }}>
-        <Link to="/" style={{
+        <Link to="/jobs" style={{
           fontSize: '18px', fontWeight: 900, letterSpacing: '-0.8px',
           background: 'linear-gradient(135deg, #818cf8 0%, #c084fc 50%, #60a5fa 100%)',
           WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
@@ -94,7 +94,6 @@ function Navbar() {
 
         {user ? (
           <div style={{ position: 'relative' }} ref={dropdownRef}>
-            {/* Avatar button */}
             <div
               onClick={() => setDropdownOpen(prev => !prev)}
               style={{
@@ -111,7 +110,6 @@ function Navbar() {
               {user.name?.charAt(0).toUpperCase()}
             </div>
 
-            {/* Dropdown */}
             {dropdownOpen && (
               <div style={{
                 position: 'absolute', top: '44px', right: 0,
@@ -123,23 +121,15 @@ function Navbar() {
                 boxShadow: '0 16px 48px rgba(0,0,0,0.5)',
                 zIndex: 200,
               }}>
-                {/* User info header */}
                 <div style={{
                   padding: '14px 16px',
                   borderBottom: '1px solid rgba(255,255,255,0.06)',
                 }}>
-                  <div style={{ fontSize: '13px', fontWeight: 600, color: '#e2e8f0' }}>
-                    {user.name}
-                  </div>
-                  <div style={{ fontSize: '11px', color: '#475569', marginTop: '2px' }}>
-                    {user.email}
-                  </div>
+                  <div style={{ fontSize: '13px', fontWeight: 600, color: '#e2e8f0' }}>{user.name}</div>
+                  <div style={{ fontSize: '11px', color: '#475569', marginTop: '2px' }}>{user.email}</div>
                 </div>
 
-                {/* Menu items */}
-                {[
-                  { label: 'Edit Profile', action: () => { navigate('/profile'); setDropdownOpen(false) } },
-                ].map(item => (
+                {[{ label: 'Edit Profile', action: () => { navigate('/profile'); setDropdownOpen(false) } }].map(item => (
                   <div
                     key={item.label}
                     onClick={item.action}
@@ -149,20 +139,13 @@ function Navbar() {
                       fontSize: '13px', color: '#94a3b8',
                       transition: 'all 0.15s',
                     }}
-                    onMouseEnter={e => {
-                      e.currentTarget.style.background = 'rgba(255,255,255,0.04)'
-                      e.currentTarget.style.color = '#e2e8f0'
-                    }}
-                    onMouseLeave={e => {
-                      e.currentTarget.style.background = 'transparent'
-                      e.currentTarget.style.color = '#94a3b8'
-                    }}
+                    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.color = '#e2e8f0' }}
+                    onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#94a3b8' }}
                   >
-                    <span style={{ fontSize: '13px' }}>{item.label}</span>
+                    {item.label}
                   </div>
                 ))}
 
-                {/* Divider + Logout */}
                 <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
                   <div
                     onClick={() => { logout(); navigate('/login'); setDropdownOpen(false) }}
@@ -175,7 +158,7 @@ function Navbar() {
                     onMouseEnter={e => e.currentTarget.style.background = 'rgba(239,68,68,0.06)'}
                     onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                   >
-                    <span style={{ fontSize: '13px' }}>Logout</span>
+                    Logout
                   </div>
                 </div>
               </div>
