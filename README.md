@@ -2,7 +2,7 @@
 
 # JobPulse ⚡
 
-**Find FAANG jobs 3–4 hours before LinkedIn does.**
+**Real-time job intelligence. Direct from the source.**
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev/)
@@ -15,9 +15,17 @@
 
 ---
 
-## Overview
+## The Problem
 
-LinkedIn aggregates job postings from company career portals with a **3–4 hour delay**. Early applicants (first 50–100) have significantly higher callback rates. JobPulse scrapes career portals directly — surfacing new roles the moment they post.
+I was applying to new grad roles at FAANG companies. Every morning I'd open LinkedIn, find a role posted "3 hours ago", and apply only to get an automated rejection days later.
+
+I started wondering *who actually gets through?*
+
+After digging into it, the pattern was clear. Companies post jobs directly to their career portals. LinkedIn crawls those portals and republishes them but with a 3–4 hour delay. By the time most people see a posting on LinkedIn, the role already has hundreds of applicants.
+
+The candidates getting callbacks weren't more qualified. They were just **earlier**.
+
+So I built JobPulse a system that monitors company career portals directly, detects new postings the moment they go live, and alerts you before the role ever reaches other job portals. No aggregators. No delay. Just the source.
 
 ---
 
