@@ -1,20 +1,29 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useState, useRef, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 
 function Navbar() {
   const { user, logout } = useAuth()
   const location = useLocation()
   const navigate = useNavigate()
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const dropdownRef = useRef(null)
 
-  const handleLogout = () => {
-    logout()
-    navigate('/login')
-  }
+  useEffect(() => {
+    const handleClick = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setDropdownOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [])
 
   const navLinks = [
-    { label: 'Jobs', path: '/' },
-    { label: 'Saved', path: '/saved' },
-    { label: 'Alerts', path: '/alerts' },
+    { label: 'Jobs',      path: '/' },
+    { label: 'Saved',     path: '/saved' },
+    { label: 'Applied',   path: '/applied' },
+    { label: 'AI Match',  path: '/ai' },
     { label: 'Analytics', path: '/analytics' },
   ]
 
@@ -71,27 +80,11 @@ function Navbar() {
 
       {/* Right */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-        {/* Live pill */}
-        <div style={{
-          display: 'flex', alignItems: 'center', gap: '7px',
-          background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.15)',
-          padding: '5px 12px', borderRadius: '20px',
-          fontSize: '11px', fontWeight: 600, color: '#4ade80',
-        }}>
-          <span style={{
-            width: '6px', height: '6px', background: '#22c55e', borderRadius: '50%',
-            boxShadow: '0 0 8px #22c55e',
-            animation: 'pulse-dot 2s ease infinite',
-            display: 'inline-block',
-          }} />
-          Live
-        </div>
-
-        {/* Bell */}
         <Link to="/alerts" style={{
           position: 'relative', width: '36px', height: '36px',
-          borderRadius: '9px', background: 'rgba(255,255,255,0.04)',
-          border: '1px solid rgba(255,255,255,0.07)',
+          borderRadius: '9px',
+          background: isActive('/alerts') ? 'rgba(99,102,241,0.12)' : 'rgba(255,255,255,0.04)',
+          border: isActive('/alerts') ? '1px solid rgba(99,102,241,0.25)' : '1px solid rgba(255,255,255,0.07)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           fontSize: '15px', textDecoration: 'none',
           transition: 'all 0.2s ease',
@@ -99,28 +92,94 @@ function Navbar() {
           🔔
         </Link>
 
-        {/* User */}
         {user ? (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div style={{
-              width: '34px', height: '34px', borderRadius: '50%',
-              background: 'linear-gradient(135deg, #4f46e5, #7c3aed)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: '13px', fontWeight: 700, color: 'white',
-              border: '2px solid rgba(139,92,246,0.3)',
-              cursor: 'default',
-            }}>
+          <div style={{ position: 'relative' }} ref={dropdownRef}>
+            {/* Avatar button */}
+            <div
+              onClick={() => setDropdownOpen(prev => !prev)}
+              style={{
+                width: '34px', height: '34px', borderRadius: '50%',
+                background: 'linear-gradient(135deg, #4f46e5, #7c3aed)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: '13px', fontWeight: 700, color: 'white',
+                border: '2px solid rgba(139,92,246,0.3)',
+                cursor: 'pointer', userSelect: 'none',
+                transition: 'border-color 0.2s',
+                ...(dropdownOpen && { borderColor: 'rgba(139,92,246,0.6)' }),
+              }}
+            >
               {user.name?.charAt(0).toUpperCase()}
             </div>
-            <button onClick={handleLogout} style={{
-              background: 'transparent',
-              border: '1px solid rgba(255,255,255,0.08)',
-              color: '#475569', fontSize: '12px', fontWeight: 500,
-              padding: '6px 14px', borderRadius: '8px',
-              cursor: 'pointer', transition: 'all 0.2s ease',
-            }}>
-              Logout
-            </button>
+
+            {/* Dropdown */}
+            {dropdownOpen && (
+              <div style={{
+                position: 'absolute', top: '44px', right: 0,
+                width: '220px',
+                background: 'rgba(10,10,20,0.98)',
+                border: '1px solid rgba(255,255,255,0.08)',
+                borderRadius: '12px', overflow: 'hidden',
+                backdropFilter: 'blur(20px)',
+                boxShadow: '0 16px 48px rgba(0,0,0,0.5)',
+                zIndex: 200,
+              }}>
+                {/* User info header */}
+                <div style={{
+                  padding: '14px 16px',
+                  borderBottom: '1px solid rgba(255,255,255,0.06)',
+                }}>
+                  <div style={{ fontSize: '13px', fontWeight: 600, color: '#e2e8f0' }}>
+                    {user.name}
+                  </div>
+                  <div style={{ fontSize: '11px', color: '#475569', marginTop: '2px' }}>
+                    {user.email}
+                  </div>
+                </div>
+
+                {/* Menu items */}
+                {[
+                  { label: 'Edit Profile', action: () => { navigate('/profile'); setDropdownOpen(false) } },
+                ].map(item => (
+                  <div
+                    key={item.label}
+                    onClick={item.action}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: '10px',
+                      padding: '10px 16px', cursor: 'pointer',
+                      fontSize: '13px', color: '#94a3b8',
+                      transition: 'all 0.15s',
+                    }}
+                    onMouseEnter={e => {
+                      e.currentTarget.style.background = 'rgba(255,255,255,0.04)'
+                      e.currentTarget.style.color = '#e2e8f0'
+                    }}
+                    onMouseLeave={e => {
+                      e.currentTarget.style.background = 'transparent'
+                      e.currentTarget.style.color = '#94a3b8'
+                    }}
+                  >
+                    <span style={{ fontSize: '13px' }}>{item.label}</span>
+                  </div>
+                ))}
+
+                {/* Divider + Logout */}
+                <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                  <div
+                    onClick={() => { logout(); navigate('/login'); setDropdownOpen(false) }}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: '10px',
+                      padding: '10px 16px', cursor: 'pointer',
+                      fontSize: '13px', color: '#ef4444',
+                      transition: 'all 0.15s',
+                    }}
+                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(239,68,68,0.06)'}
+                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                  >
+                    <span style={{ fontSize: '13px' }}>Logout</span>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         ) : (
           <Link to="/login" style={{
@@ -134,13 +193,6 @@ function Navbar() {
           </Link>
         )}
       </div>
-
-      <style>{`
-        @keyframes pulse-dot {
-          0%, 100% { opacity: 1; transform: scale(1); }
-          50% { opacity: 0.5; transform: scale(0.8); }
-        }
-      `}</style>
     </nav>
   )
 }

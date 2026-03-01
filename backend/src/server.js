@@ -24,12 +24,16 @@ const jobRoutes = require('./routes/jobs');
 const alertRoutes = require('./routes/alerts');
 const aiRoutes = require('./routes/ai');
 const trackedRoutes = require('./routes/tracked');
+const analyticsRoutes = require('./routes/analytics');
+const appliedRoutes = require('./routes/applied');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/jobs', jobRoutes);
 app.use('/api/alerts', alertRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/tracked', trackedRoutes);
+app.use('/api/analytics', analyticsRoutes);
+app.use('/api/applied', appliedRoutes);
 
 // Health check
 app.get('/', (req, res) => {
@@ -49,6 +53,6 @@ server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 
-startCronJobs();
+startCronJobs(io);
 
 module.exports = { app, io };
