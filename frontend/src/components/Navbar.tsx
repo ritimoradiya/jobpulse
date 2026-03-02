@@ -80,17 +80,22 @@ function Navbar() {
 
       {/* Right */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-        <Link to="/alerts" style={{
-          position: 'relative', width: '36px', height: '36px',
-          borderRadius: '9px',
-          background: isActive('/alerts') ? 'rgba(99,102,241,0.12)' : 'rgba(255,255,255,0.04)',
-          border: isActive('/alerts') ? '1px solid rgba(99,102,241,0.25)' : '1px solid rgba(255,255,255,0.07)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: '15px', textDecoration: 'none',
-          transition: 'all 0.2s ease',
-        }}>
+
+        {/* Bell — toggles alerts page */}
+        <div
+          onClick={() => navigate(location.pathname === '/alerts' ? '/jobs' : '/alerts')}
+          style={{
+            position: 'relative', width: '36px', height: '36px',
+            borderRadius: '9px',
+            background: isActive('/alerts') ? 'rgba(99,102,241,0.12)' : 'rgba(255,255,255,0.04)',
+            border: isActive('/alerts') ? '1px solid rgba(99,102,241,0.25)' : '1px solid rgba(255,255,255,0.07)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: '15px', cursor: 'pointer',
+            transition: 'all 0.2s ease',
+          }}
+        >
           🔔
-        </Link>
+        </div>
 
         {user ? (
           <div style={{ position: 'relative' }} ref={dropdownRef}>

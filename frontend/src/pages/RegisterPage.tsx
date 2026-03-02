@@ -33,7 +33,7 @@ function RegisterPage() {
     try {
       const res = await api.post('/auth/register', { name, email, password })
       login(res.data.token, res.data.user)
-      navigate('/')
+      navigate('/login')
     } catch (err) {
       setError(err.response?.data?.message || 'Registration failed')
     } finally {

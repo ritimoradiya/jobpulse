@@ -18,7 +18,7 @@ function LoginPage() {
     try {
       const res = await api.post('/auth/login', { email, password })
       login(res.data.token, res.data.user)
-      navigate('/')
+      navigate('/jobs')
     } catch (err) {
       setError(err.response?.data?.message || 'Invalid email or password')
     } finally {
