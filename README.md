@@ -9,6 +9,7 @@
 [![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=flat-square&logo=postgresql&logoColor=white)](https://postgresql.org/)
 [![Socket.io](https://img.shields.io/badge/Socket.io-010101?style=flat-square&logo=socket.io&logoColor=white)](https://socket.io/)
+![Claude AI](https://img.shields.io/badge/Claude_AI-D97706?style=flat-square&logoColor=white)
 [![Jest](https://img.shields.io/badge/Jest-14%2F14_passing-C21325?style=flat-square&logo=jest&logoColor=white)](/)
 
 </div>
@@ -17,15 +18,15 @@
 
 ## The Problem
 
-I was applying to new grad roles at FAANG companies. Every morning I'd open LinkedIn, find a role posted "3 hours ago", and apply only to get an automated rejection days later.
+I was applying to new grad roles at FAANG companies. Every morning I'd open LinkedIn, find a role posted "3 hours ago", and apply — only to get an automated rejection days later.
 
-I started wondering *who actually gets through?*
+I started wondering: *who actually gets through?*
 
-After digging into it, the pattern was clear. Companies post jobs directly to their career portals. LinkedIn crawls those portals and republishes them but with a 3–4 hour delay. By the time most people see a posting on LinkedIn, the role already has hundreds of applicants.
+After digging into it, the pattern was clear. Companies post jobs directly to their career portals. LinkedIn crawls those portals and republishes them — but with a 3–4 hour delay. By the time most people see a posting on LinkedIn, the role already has hundreds of applicants. Recruiters often stop reviewing after the first 50–100.
 
 The candidates getting callbacks weren't more qualified. They were just **earlier**.
 
-So I built JobPulse a system that monitors company career portals directly, detects new postings the moment they go live, and alerts you before the role ever reaches other job portals. No aggregators. No delay. Just the source.
+So I built JobPulse — a system that monitors company career portals directly, detects new postings the moment they go live, and alerts you before the role ever reaches LinkedIn. No aggregators. No delay. Just the source.
 
 ---
 
